@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="SPH Fluid Simulation with GPU Acceleration. CMSC838M Final Project by Wenxuan Wu.">
+  <meta name="keywords" content="SPH, Fluid Simulation, GPU Acceleration, Physically-Based Animation, Computer Graphics, Wenxuan Wu, CMSC838M">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPH Fluid Simulation with GPU Acceleration</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- Consider removing or replacing this with your own analytics if desired -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <!-- You can create a new favicon for your project -->
+  <link rel="icon" href="./static/images/fluid_icon.svg"> <!-- Replace with a suitable icon -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#"> 
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      <span>Project Home</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">SPH Fluid Simulation with GPU Acceleration</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Wenxuan Wu
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">CMSC838M: Physic-based Simulation Final Project</span><br>
+            <!-- <span class="author-block">University/Institution</span> -->
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Report Link. -->
+              <span class="link-block">
+                <a href="../../ace8b08f-f305-4b13-a6cd-58433bcf5878_Export-2875c9b7-15e5-4796-a2a6-3e33c5d80e1e/SPH Fluid Simulation with GPU Acceleration 1f9a0124115480cf8538e6d09c2f3e85.html" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-alt"></i> <!-- Changed icon for HTML -->
+                  </span>
+                  <span>Report (HTML)</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://youtu.be/18-g1og_G6E"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/your_username/your_project_repo" 
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3 has-text-centered">Simulation Highlights</h2>
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-result1">
+          <img id="result1" src="./static/videos/interaction.gif" alt="Simulation Stability: Without Predicted Schema" style="width:100%;"> <!-- Changed video to img -->
+          <p class="has-text-centered">Simulation Stability: Without Predicted Schema</p>
+        </div>
+        <div class="item item-result2">
+          <img id="result2" src="./static/videos/interaction_(1).gif" alt="Simulation Stability: With Predicted Schema" style="width:100%;"> <!-- Changed video to img -->
+          <p class="has-text-centered">Simulation Stability: With Predicted Schema</p>
+        </div>
+        <div class="item item-result3">
+          <img id="result3" src="./static/videos/viscosity.gif" alt="Viscosity Effects: Other Integration Method" style="width:100%;"> <!-- Changed video to img -->
+          <p class="has-text-centered">Viscosity Effects: Other Integration Method</p>
+        </div>
+        <div class="item item-result4">
+          <img id="result4" src="./static/videos/general.gif" alt="Viscosity Effects: Verlet Method with Viscosity" style="width:100%;"> <!-- Changed video to img -->
+          <p class="has-text-centered">Viscosity Effects: Verlet Method with Viscosity</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            This project presents the design and implementation of a fluid simulator based on the Smoothed Particle Hydrodynamics (SPH) method. SPH is a Lagrangian mesh-free particle method widely used for simulating fluid dynamics. Our simulator models fluid behavior by discretizing the fluid into a set of particles, each carrying properties like mass, density, velocity, and pressure. We implement core SPH algorithms including neighborhood searching, density estimation, pressure force calculation, and viscosity effects. The simulator support direct paramter tuning, user interactions with bounding box, and flow visualization with color. We demonstrate the capabilities of our simulator through various scenarios, showcasing realistic fluid motion and interactions. The main implementation follows the proposed approach by Müller et al. (2003), adopting its formula and different kernal functions for calculating quantities. We also adopt some parallel programming techniques with GPU and  use optimized data structure for improving performance.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Main Project Video. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Project Demo Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/18-g1og_G6E"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <!--/ Main Project Video. -->
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="content has-text-justified">
+          <p>
+            This report presents an SPH-based fluid simulator capable of visually plausible real-time 2D/3D fluid simulations. The simulator explores various SPH formulations, efficient neighbor-search techniques, and leverages parallel computing to achieve interactive frame rates. It outlines theoretical foundations, implementation details, achieved results, and discusses potential improvements.
+          </p>
+        </div>
+
+        <h2 class="title is-3">Motivation</h2>
+        <div class="content has-text-justified">
+          <p>
+            The project originated from exploring immersive particle cloud interactions in virtual reality (VR). Inspired by this, the idea emerged to create a similar immersive experience but with fluid simulations enhanced by haptic feedback. Initially, the project aimed to implement a fast and interactive fluid simulator using Unity, Meta Quest SDK, and GPU programming. However, the limited timeframe and steep learning curve required for mastering this complex tech stack posed significant challenges. Consequently, the project goals were revised toward a more achievable scope: leveraging familiar technologies such as C++, OpenGL, and CUDA to develop an interactive fluid simulation demo.
+          </p>
+        </div>
+
+        <h2 class="title is-3">Background: Smoothed Particle Hydrodynamics</h2>
+        <div class="content has-text-justified">
+          <p>
+            Fluid simulation is a widely studied area in physics-based modeling, rendering, and animation. Traditional approaches include Smoothed Particle Hydrodynamics (SPH), Grid-Based Methods (Eulerian), FLIP (Fluid-Implicit Particle), and Position-Based Dynamics (PBD). Grid-based methods simulate fluid using fixed grids with physical properties. While they provide high physical accuracy (e.g., solving the Poisson equation), they are computationally expensive for real-time applications.
+          </p>
+          <p>
+            In contrast, particle-based methods (SPH and PBD) simulate fluids using discrete particles that carry physical properties and interact through forces or positional constraints. These methods offer flexibility in interacting with objects, adaptable resolution, and are parallel-friendly, although they trade off some physical accuracy. FLIP is a hybrid method that uses particles for advection and grids for solving fluid equations. While it combines the strengths of both approaches, it is more complex to implement.
+          </p>
+          <p>
+            After reviewing current literature, we believe that particle-based methods are better suited for scenarios requiring real-time performance, such as VR. The most representative work is by Müller et al., <em>Particle-Based Fluid Simulation for Interactive Applications</em>, which provided a general framework that guided the implementation of our project.
+          </p>
+          <p>
+            SPH was initially developed for astrophysical applications but has since become widely adopted in computer graphics. Key concepts include:
+            <ul>
+              <li><strong>Particle Discretization:</strong> The fluid is represented by a collection of particles, each carrying physical quantities such as position, velocity, density, pressure, and viscosity.</li>
+              <li><strong>Kernel Functions:</strong> Physical quantities at any point are estimated by summing the contributions of neighboring particles, weighted by a smoothing kernel (e.g., Poly6, Spiky).</li>
+            </ul>
+          </p>
+          <div class="has-text-centered">
+            <img src="./static/videos/image.png" alt="SPH Kernel Functions" style="width:288px; margin:1em auto;">
+            <p class="caption">SPH Kernel Functions</p>
+          </div>
+          <ul>
+            <li><strong>Governing Equations:</strong> The simulation evolves based on discretized forms of the Navier-Stokes equations, typically calculating density, pressure, and viscosity forces.</li>
+          </ul>
+          <div class="has-text-centered">
+            <img src="./static/videos/image 1.png" alt="Fluid Navier-Stokes Equation" style="width:349px; margin:1em auto;">
+            <p class="caption">Fluid Navier-Stokes Equation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method and Implementation Details</h2>
+        <div class="content has-text-justified">
+          <p>
+            Given the SPH framework, our simulator models fluid behavior by integrating particle positions and velocities under the influence of viscosity, pressure, and external forces (e.g., gravity). For simplicity, we currently ignore fluid advection. Our SPH simulator was implemented in C++ using OpenGL for rendering, GLM for mathematical operations, and CUDA Thrust for parallel sorting. Key components of the implementation include:
+          </p>
+          <h3 class="title is-4">Particle Representation</h3>
+          <p>
+            Each particle stores its position, velocity, mass, density, pressure, and accumulated forces. We use a customized SphereBV data structure to hold these quantities along with the associated mesh. A lathe-based mesh generator is implemented to create sphere meshes with configurable complexity. The <code>SimulatorWorld</code> class maintains an array of all SphereBVs.
+          </p>
+          <h3 class="title is-4">Neighbor Searching</h3>
+          <p>
+            Efficient neighbor search is critical for SPH. Following Nvidia’s guidance on GPU-accelerated particle simulation, we implemented a uniform grid-based method that performs parallel sorting of particles by their spatial cell ID. Since the smoothing length (<code>h</code>) defines a particle’s neighborhood, we only need to examine the 3x3 cells surrounding any given point. This reduces neighbor search complexity from O(N) to O(K), where K is the number of particles in neighboring cells.
+          </p>
+          <p>
+            In our implementation, we maintain two precomputed buffers: a sorted <code>SpatialLookup</code> array containing (particle index, cell key) pairs, and a <code>startIndices</code> array indicating where particles begin for each cell key. In real-world tests, this optimization improved the simulator's frame rate from 8 FPS to 30 FPS for 500 particles using CPU-only computation.
+          </p>
+          <div class="has-text-centered">
+            <img src="./static/videos/image 2.png" alt="Neighbor Searching Data Structure" style="width:709px; margin:1em auto;">
+            <p class="caption">Neighbor Searching Data Structure</p>
+          </div>
+
+          <h3 class="title is-4">Predicted Schema</h3>
+          <p>
+            To mitigate instability caused by discretization in numerical integration, we adopt a widely-used technique known as the predicted schema. We first apply gravity to predict each particle’s next position and velocity. These predicted values are then used for density, pressure, and viscosity computations.
+          </p>
+
+          <h3 class="title is-4">SPH Computations</h3>
+          <p>
+            The core simulation loop involves:
+            <ol>
+              <li>Updating the spatial grid/hash for neighbor searching.</li>
+              <li>For each particle:
+                <ul>
+                  <li>Calculating density based on neighbors (using the Poly6 kernel).</li>
+                  <li>Calculating pressure from density (using the predicted positions).</li>
+                  <li>Calculating pressure forces (using the gradient of the Spiky kernel).</li>
+                  <li>Calculating viscosity forces (e.g., using the Laplacian of the viscosity kernel).</li>
+                </ul>
+              </li>
+              <li>Integrating particle positions and velocities (using Euler, Verlet, or RK4 integration).</li>
+            </ol>
+          </p>
+          <h3 class="title is-4">Parallel Acceleration</h3>
+          <p>
+            In our first version, we simply serially perform the simulation with CPU. It turns out to be a terrible idea and has a very low FPS (Lower than 5). Then we searched for some parallel programming techniques such as multi-threading and mult-processing. After watching some tutorials, we learned that there are three tech stack for achieving this: CPU-acceleration (C++ Multithreading), GPU-accleration (CUDA or Compute Shader). Due to the steep learning curves, for now we just implement some CPU multhreading techniques using OpenOMP library for loop operation and CUDA thrust library for parallel sorting. In the future, we hope we could improve the current performance further by moving all currently CPU multithreading loops to CUDA kernals, and implement GPU instancing rendering with compute shader. Not hard to achieve!
+          </p>
+          <h3 class="title is-4">Boundary Handling</h3>
+          <p>
+            Solid boundary interactions are handled by reflecting particle velocities upon collision. Initially, we included rigid body collision code to simulate interaction with external objects (e.g., a VR hand using rigid mini spheres). However, since our current demo does not support fluid-object interaction, that code was removed to improve real-time performance.
+          </p>
+          <h3 class="title is-4">Rendering</h3>
+          <p>
+            Currently, particles are rendered as shaded spheres using OpenGL. Future improvements include implementing more advanced techniques like point splatting or marching cubes for enhanced realism.
+          </p>
+          <h3 class="title is-4">User Input</h3>
+          <p>
+            The simulator includes a basic user interface. Users can adjust simulation parameters and manipulate bounding boxes in real time. Camera movement is supported via WASD keys and mouse controls.
+          </p>
+          <div class="columns is-vcentered">
+            <div class="column">
+              <img src="./static/videos/interaction.gif" alt="Translate and Rotate Bounding Box" style="width: 100%;"> <!-- Changed video to img -->
+              <p class="has-text-centered caption">Translate and Rotate Bounding Box</p>
+            </div>
+            <div class="column">
+              <img src="./static/videos/interaction_(1).gif" alt="WASD Camera Movement" style="width: 100%;"> <!-- Changed video to img -->
+              <p class="has-text-centered caption">WASD Camera Movement</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results and Analysis</h2>
+        <div class="content has-text-justified">
+          <p>
+            We successfully developed a visually plausible 3D fluid simulator using the Smoothed Particle Hydrodynamics (SPH) method.
+          </p>
+          <div class="has-text-centered">
+            <img src="./static/videos/general.gif" alt="Default UI and Simulation" style="width: 60%; display: block; margin-left: auto; margin-right: auto;"> <!-- Changed video to img -->
+            <p class="caption">Default UI and Simulation</p>
+          </div>
+          <p>
+            During optimization and tuning, we observed the following:
+            <ul>
+              <li>Using predicted positions (based on gravitationally influenced estimates) combined with Verlet integration greatly improved simulation stability.</li>
+            </ul>
+          </p>
+          <div class="columns is-vcentered">
+            <div class="column">
+              <img src="./static/videos/predictedPos.gif" alt="Without Predicted Schema" style="width: 100%;"> <!-- Changed video to img -->
+              <p class="has-text-centered caption">Without Predicted Schema</p>
+            </div>
+            <div class="column">
+              <img src="./static/videos/predictedPos_(1).gif" alt="With Predicted Schema" style="width: 100%;"> <!-- Changed video to img -->
+              <p class="has-text-centered caption">With Predicted Schema</p>
+            </div>
+          </div>
+          <ul>
+            <li>Incorporating viscosity forces further reduced particle chaos, although excessively high viscosity values caused the fluid to break into separate clusters.</li>
+          </ul>
+          <div class="columns is-vcentered">
+            <div class="column">
+              <img src="./static/videos/viscosity.gif" alt="Other Integration Method (Less Stable)" style="width: 100%;"> <!-- Changed video to img -->
+              <p class="has-text-centered caption">Other Integration Method (Less Stable)</p>
+            </div>
+            <div class="column">
+              <img src="./static/videos/viscosity_(1).gif" alt="Verlet Method with Viscosity (More Stable)" style="width: 100%;"> <!-- Changed video to img -->
+              <p class="has-text-centered caption">Verlet Method with Viscosity (More Stable)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Challenges</h2>
+        <div class="content has-text-justified">
+          <p>
+            During implementation, we spent extra time figuring out which tech stack to use and jumping around between using Unity with Compute Shader & Meta Quest SDK and simply implement in C++ environment with OpenGL. We actually have multiple experiment on learning Unity Pipeline with Compute Shader, but still have a lot of unresolved bugs and issues. For example, how to integrate Meta Quest OpenXR SDK with our real-time fluid simulation using GPU object instancing rendering? Since the normal customized instancing shader is generally for monocular rendering. How to implement a rendering pipeline for binocular rendering with customized shader? It is a vital to figure out.
+          </p>
+          <p>
+            Due to the limited time, for now we just implement the simulator using pure C++ environment. And we also spent a lot of time fine tuning and find optimization way for both physical accuracy and real-time performance. At first we are so frustrated that having a thousand of chaotic particles jumping around, it doesn’t like fluid at all! Then we read some techniques including predicted schema and adding diffusion force to get a smoother fluid (At least like fluid!). During a lot of time spent on fine tuning, we randomly found that verlet integration also stabilize the fluid. Finally we get a relatively plausible fluid! For performance optimization, we spent some time figuring out the use of multithreading and cuda environment. But still leave a huge space for future improvement.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Discussion and Future Work</h2>
+        <div class="content has-text-justified">
+          <p>
+            Although eventually we implement a plausible fluid simulation demo based on SPH method. There are multiple things to do from refractoring current code, adding extra features to performance accleration and VR Setup.
+          </p>
+          <h3 class="title is-4">Refactoring Code</h3>
+          <p>
+            The current design stems from a previous rigid body dynamics assignment. All physical quantities are encapsulated in the <code>SphereBV</code> object. However, this structure presents challenges for GPU optimization due to data races when multiple threads modify the same object. We addressed some issues using memory padding, but a more scalable solution requires redesigning data layout for GPU parallelism.
+          </p>
+          <div class="has-text-centered">
+            <img src="./static/videos/image 3.png" alt="Memory-consuming Data Structure" style="width:624px; margin:1em auto;">
+            <p class="caption">Memory-consuming Data Structure (SphereBV)</p>
+          </div>
+          <p>
+            In the future, we would rewrite the whole simulator code when we transfer simulation and rendering to GPU with kernal functions.
+          </p>
+          <h3 class="title is-4">Adding Interaction Features</h3>
+          <p>
+            Currently, users can only move or rotate bounding boxes. We plan to add a large interactive sphere that disturbs the fluid using repulsive forces or rigid body dynamics. In a VR environment, users will be able to manipulate this sphere with their hands, potentially with haptic feedback.
+          </p>
+          <h3 class="title is-4">Performance Optimization</h3>
+          <p>
+            As discussed above, we intend to fully migrate simulation and rendering to the GPU using CUDA or compute shaders. Additional improvements may include more realistic lighting and optimized data structures for large-scale simulations.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">References</h2>
+        <div class="content has-text-justified">
+          <ul>
+            <li>Sebastian Lague. (2021, May 20). <em>Coding Adventure: Simulating Fluids</em> [Video]. YouTube. <a href="https://www.youtube.com/watch?v=rSKMYc1CQHE&t=2122s" target="_blank">https://www.youtube.com/watch?v=rSKMYc1CQHE&t=2122s</a></li>
+            <li>Koschier, D., Bender, J., Solenthaler, B., & Teschner, M. (n.d.). <em>Smoothed particle hydrodynamics: Techniques for the physics-based simulation of fluids and solids</em> (Work-in-progress). Retrieved May 20, 2025, from <a href="https://interactivecomputergraphics.github.io/SPH-Tutorial" target="_blank">https://interactivecomputergraphics.github.io/SPH-Tutorial</a></li>
+            <li>NVIDIA. (n.d.). <em>Particle simulation using CUDA</em>. Retrieved May 20, 2025, from <a href="https://developer.nvidia.com/cuda-example" target="_blank">https://developer.nvidia.com/cuda-example</a></li>
+            <li>Müller, M., Charypar, D., & Gross, M. (2003). Particle-based fluid simulation for interactive applications. In <em>Proceedings of the 2003 ACM SIGGRAPH/Eurographics Symposium on Computer Animation</em> (pp. 154–159). Eurographics Association. <a href="https://doi.org/10.2312/SCA03/154-159" target="_blank">https://doi.org/10.2312/SCA03/154-159</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{muller2003particle,
+  title={Particle-based fluid simulation for interactive applications},
+  author={M{\"u}ller, Matthias and Charypar, David and Gross, Markus},
+  booktitle={Proceedings of the 2003 ACM SIGGRAPH/Eurographics symposium on Computer animation},
+  pages={154--159},
+  year={2003},
+  organization={Eurographics Association}
+}
+
+@misc{lague2021fluids,
+  author = {Sebastian Lague},
+  title = {Coding Adventure: Simulating Fluids},
+  year = {2021},
+  month = {May},
+  howpublished = {\url{https://www.youtube.com/watch?v=rSKMYc1CQHE&t=2122s}},
+  note = {Accessed: May 20, 2025}
+}
+
+@misc{koschier_sph_tutorial,
+  author = {Koschier, D. and Bender, J. and Solenthaler, B. and Teschner, M.},
+  title = {Smoothed particle hydrodynamics: Techniques for the physics-based simulation of fluids and solids},
+  year = {n.d.},
+  howpublished = {\url{https://interactivecomputergraphics.github.io/SPH-Tutorial}},
+  note = {Work-in-progress, Accessed: May 20, 2025}
+}
+
+@misc{nvidia_cuda_particle_sim,
+  author = {NVIDIA},
+  title = {Particle simulation using CUDA},
+  year = {n.d.},
+  howpublished = {\url{https://developer.nvidia.com/cuda-example}},
+  note = {Accessed: May 20, 2025}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="../../ace8b08f-f305-4b13-a6cd-58433bcf5878_Export-2875c9b7-15e5-4796-a2a6-3e33c5d80e1e/SPH Fluid Simulation with GPU Acceleration 1f9a0124115480cf8538e6d09c2f3e85.html">
+        <i class="fas fa-file-alt"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/your_username/your_project_repo" class="external-link"> <!-- Update with your GitHub repo -->
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website template was adapted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page, licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            You are free to use and adapt this modified template for your project.
+            Please remember to remove or update any analytics code if not needed.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
